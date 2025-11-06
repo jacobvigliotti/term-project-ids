@@ -9,7 +9,8 @@ DEFAULT_CONFIG = {
     "alert_log_path": "alerts.log",    # Where to store alerts
     "ml_model_path": "ml/models/ids_model.pkl",  # Path to trained ML model
     "enable_dashboard": False,         # Toggle Flask dashboard
-    "capture_limit": 0,                # 0 = unlimited packets
+    "capture_limit": 10,                # 0 = unlimited packets
+    "capture_timeout": 30,              #30 seconds
     "log_raw_packets": False,          # Save raw packets to PCAP
     "pcap_output_path": "logs/capture.pcap"
 }

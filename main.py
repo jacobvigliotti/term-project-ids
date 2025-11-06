@@ -1,14 +1,8 @@
 import threading
 from core.packet_capture import start_sniffing_thread
 from utils.config import load_config
-from core.logger import log_alert
+from utils.logger import log_alert
 
-# Optional: initialize ML model
-try:
-    from ml.model_predictor import load_model
-    ml_model = load_model()
-except ImportError:
-    ml_model = None
 
 def handle_packet(packet):
     print(packet.show(dump=True))
