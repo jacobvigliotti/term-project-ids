@@ -1,5 +1,5 @@
 import threading
-from core.packet_capture import start_sniffing
+from core.packet_capture import start_sniffing_thread
 from utils.config import load_config
 from core.logger import log_alert
 
@@ -11,6 +11,9 @@ except ImportError:
     ml_model = None
 
 def handle_packet(packet):
+    print(packet.show(dump=True))
+
+    ''' 
     from core.analyzer import extract_features
     from core.rules_engine import check_signatures
     from core.anomaly_detector import detect_anomaly
@@ -23,12 +26,15 @@ def handle_packet(packet):
         log_alert("Anomaly detected.")
     elif track_protocol(packet):
         log_alert("Protocol violation detected.")
+    '''
+        
 
 def main():
     config = load_config()
     print("[IDS] Starting packet capture...")
-    sniff_thread = threading.Thread(target=start_sniffing, args=(handle_packet,))
-    sniff_thread.start()
+    start_sniffing_thread(handle_packet)
+    while True:
+        pass
 
 if __name__ == "__main__":
     main()

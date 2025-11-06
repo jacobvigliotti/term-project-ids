@@ -3,7 +3,7 @@ import os
 
 # Default configuration values
 DEFAULT_CONFIG = {
-    "interface": None,                  # e.g., "eth0", "wlan0", or None for auto
+    "interface": "lo",                  # e.g., "eth0", "wlan0", or None for auto
     "packet_filter": "ip",             # BPF filter string (e.g., "tcp", "udp", "port 80")
     "syn_flood_threshold": 100,        # SYN packets per IP per minute
     "alert_log_path": "alerts.log",    # Where to store alerts
