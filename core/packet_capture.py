@@ -1,4 +1,4 @@
-from scapy.all import sniff
+from scapy.all import sniff, get_if_list
 import threading
 from utils.config import load_config
 from utils.pcap import save_pcap
@@ -20,15 +20,21 @@ def start_sniffing(callback, iface=DEFAULT_INTERFACE, packet_filter=DEFAULT_FILT
         packet_filter (str): BPF filter string (e.g., "tcp", "udp", "port 80").
     """
     print(f"[Sniffer] Starting sniffing on interface: {iface or 'default'} with filter: '{packet_filter}'")
+    print(get_if_list())
     packet = sniff(
         iface=iface,
         filter=packet_filter,
         prn=callback,
-        store=False,
+        store=True,
         count = DEFAULT_COUNT,
         timeout =  DEFAULT_TIMEOUT
     )
-    save_pcap(packet)
+    
+    if(len(packet) > 0):
+        save_pcap(packet)
+        print("finished sniff. save pcap.")
+    else:
+        print("No packets to save.")
 
 def start_sniffing_thread(callback, iface=DEFAULT_INTERFACE, packet_filter=DEFAULT_FILTER):
     """
