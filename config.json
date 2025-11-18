@@ -1,0 +1,29 @@
+{
+    "packet_filter": "ip",
+    "alert_log_path": "alerts.log",
+    "filtering_rules": [
+        {
+            "action": "block",
+            "protocol": "icmp",
+            "description": "Block all ping traffic"
+        },
+        {
+            "action": "allow",
+            "dst_port": 80,
+            "protocol": "tcp",
+            "description": "Allow HTTP traffic"
+        },
+        {
+            "action": "allow",
+            "dst_port": 443,
+            "protocol": "tcp",
+            "description": "Allow HTTPS traffic"
+        },
+        {
+            "action": "block",
+            "dst_port": 23,
+            "protocol": "tcp",
+            "description": "Block Telnet, insecure protocol"
+        }
+    ]
+}
