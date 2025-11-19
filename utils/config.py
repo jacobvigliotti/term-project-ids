@@ -3,13 +3,14 @@ import os
 
 # Default configuration values
 DEFAULT_CONFIG = {
-    "interface": "None",               # None for auto
+    "interface": None,               # None for auto
     "packet_filter": "ip",             # BPF filter string (e.g., "tcp", "udp", "port 80")
     "syn_flood_threshold": 100,        # SYN packets per IP per minute
     "alert_log_path": "alerts.log",    # Where to store alerts
     "ml_model_path": "ml/models/ids_model.pkl",  # Path to trained ML model
     "enable_dashboard": False,         # Toggle Flask dashboard
     "capture_limit": 0,                # 0 = unlimited packets
+    "capture_timeout": 120,              #2 minutes
     "log_raw_packets": False,          # Save raw packets to PCAP
     "pcap_output_path": "logs/capture.pcap"
 }
