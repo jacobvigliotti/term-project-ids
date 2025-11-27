@@ -25,5 +25,34 @@
             "protocol": "tcp",
             "description": "Block Telnet, insecure protocol"
         }
+    ],
+    "signature_rules": [
+        {
+            "action": "block",
+            "description": "XMAS Scan",
+            "pattern": "TCP flags: FIN, PSH, URG set"
+        },
+        {
+            "action": "block",
+            "description": "Null Scan",
+            "pattern": "No TCP flags set"
+        },
+        {
+            "action": "block",
+            "description": "Ping of Death",
+            "pattern": "ICMP packet size > 65535"
+        },
+        {
+            "action": "block",
+            "description": "Suspicious HTTP GET",
+            "pattern": "GET /etc/passwd"
+        },
+        {
+            "action": "block",
+            "description": "SQL Injection Attempt",
+            "pattern": "UNION SELECT"
+        }
     ]
 }
+
+

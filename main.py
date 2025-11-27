@@ -10,29 +10,29 @@ def handle_packet(packet):
     Extract headers, check against rules, and log the result.
     """
     # Pull out the header info we care about
-    features = extract_features(packet)
+    header = extract_features(packet)
     
     # Skip packets without IP layer (like ARP)
     # We can't really filter these with IP-based rules
-    if features["src_ip"] is None:
+    if header["src_ip"] is None:
         return
     
     # Check this packet against our filtering rules
-    action, reason = check_packet(features)
+    action, reason = check_packet(header)
     
     # Build a message describing the packet
-    if features["src_port"]:
+    if header["src_port"]:
         # TCP or UDP packet
         packet_info = (
-            f"{features['protocol'].upper()} "
-            f"{features['src_ip']}:{features['src_port']} -> "
-            f"{features['dst_ip']}:{features['dst_port']}"
+            f"{header['protocol'].upper()} "
+            f"{header['src_ip']}:{header['src_port']} -> "
+            f"{header['dst_ip']}:{header['dst_port']}"
         )
     else:
         # ICMP or other protocol without ports
         packet_info = (
-            f"{features['protocol'].upper()} "
-            f"{features['src_ip']} -> {features['dst_ip']}"
+            f"{header['protocol'].upper()} "
+            f"{header['src_ip']} -> {header['dst_ip']}"
         )
     
     # Log based on action
@@ -43,7 +43,7 @@ def handle_packet(packet):
         severity = "INFO"
         message = f"ALLOWED: {packet_info} | Reason: {reason}"
     
-    log_alert(message, source_ip=features["src_ip"], severity=severity)
+    log_alert(message, source_ip=header["src_ip"], severity=severity)
 
 def print_stats():
     """Print current filtering statistics."""

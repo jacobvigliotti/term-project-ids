@@ -19,7 +19,7 @@ def reset_stats():
     stats["allowed"] = 0
     stats["blocked"] = 0
 
-def check_packet(features):
+def check_packet(header):
     """
     Check a packet against our filtering rules.
     
@@ -30,7 +30,7 @@ def check_packet(features):
     # Go through each rule in order
     # First matching rule wins
     for rule in FILTERING_RULES:
-        if matches_rule(features, rule):
+        if matches_rule(header, rule):
             action = rule.get("action", "block")
             description = rule.get("description", "No description")
             
@@ -47,7 +47,7 @@ def check_packet(features):
     stats["allowed"] += 1
     return ("allow", "default policy")
 
-def matches_rule(features, rule):
+def matches_rule(header, rule):
     """
     Check if a packet's features match a single rule.
     
@@ -56,27 +56,27 @@ def matches_rule(features, rule):
     """
     # Check source IP
     if "src_ip" in rule:
-        if features["src_ip"] != rule["src_ip"]:
+        if header["src_ip"] != rule["src_ip"]:
             return False
     
     # Check destination IP
     if "dst_ip" in rule:
-        if features["dst_ip"] != rule["dst_ip"]:
+        if header["dst_ip"] != rule["dst_ip"]:
             return False
     
     # Check source port
     if "src_port" in rule:
-        if features["src_port"] != rule["src_port"]:
+        if header["src_port"] != rule["src_port"]:
             return False
     
     # Check destination port
     if "dst_port" in rule:
-        if features["dst_port"] != rule["dst_port"]:
+        if header["dst_port"] != rule["dst_port"]:
             return False
     
     # Check protocol
     if "protocol" in rule:
-        if features["protocol"] != rule["protocol"].lower():
+        if header["protocol"] != rule["protocol"].lower():
             return False
     
     # All conditions passed (or rule had no conditions)
