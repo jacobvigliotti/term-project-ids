@@ -1,6 +1,14 @@
 {
-    "packet_filter": "ip",
-    "alert_log_path": "alerts.log",
+    "interface": "lo",             
+    "packet_filter": null,            
+    "syn_flood_threshold": 100,        
+    "alert_log_path": "alerts.log",    
+    "ml_model_path": "ml/models/ids_model.pkl",  
+    "enable_dashboard": false,        
+    "capture_limit": 0,            
+    "capture_timeout": 120,           
+    "log_raw_packets": true,       
+    "pcap_output_path": "logs/capture.pcap",
     "filtering_rules": [
         {
             "action": "block",
@@ -25,5 +33,34 @@
             "protocol": "tcp",
             "description": "Block Telnet, insecure protocol"
         }
+    ],
+    "signature_rules": [
+        {
+            "action": "block",
+            "description": "XMAS Scan",
+            "pattern": "TCP flags: FIN, PSH, URG set"
+        },
+        {
+            "action": "block",
+            "description": "Null Scan",
+            "pattern": "No TCP flags set"
+        },
+        {
+            "action": "block",
+            "description": "Ping of Death",
+            "pattern": "ICMP packet size > 65535"
+        },
+        {
+            "action": "block",
+            "description": "Suspicious HTTP GET",
+            "pattern": "GET /etc/passwd"
+        },
+        {
+            "action": "block",
+            "description": "SQL Injection Attempt",
+            "pattern": "UNION SELECT"
+        }
     ]
 }
+
+

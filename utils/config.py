@@ -4,7 +4,7 @@ import os
 # Default configuration values
 DEFAULT_CONFIG = {
     "interface": None,               # None for auto
-    "packet_filter": "ip",             # BPF filter string (e.g., "tcp", "udp", "port 80")
+    "packet_filter": "tcp",             # BPF filter string (e.g., "tcp", "udp", "port 80")
     "syn_flood_threshold": 100,        # SYN packets per IP per minute
     "alert_log_path": "alerts.log",    # Where to store alerts
     "ml_model_path": "ml/models/ids_model.pkl",  # Path to trained ML model
@@ -25,6 +25,7 @@ def load_config(path=CONFIG_PATH):
         try:
             with open(path, "r") as f:
                 user_config = json.load(f)
+            print(f"[Config] Loaded config file: {path}")
             return {**DEFAULT_CONFIG, **user_config}
         except Exception as e:
             print(f"[Config] Failed to load config file: {e}")
