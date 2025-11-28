@@ -1,49 +1,9 @@
-from core.packet_capture import start_sniffing_thread
-from core.analyzer import extract_features
-from core.rules_engine import check_packet, get_stats
-from core.logger import log_alert
+from core.packet_sniffer import start_sniffing_thread
+from core.packet_analyzer import get_stats
+from core.packet_handler import handle_packet
 from utils.config import load_config
+from test.traffic_generator import TrafficGenerator
 
-def handle_packet(packet):
-    """
-    Process each captured packet.
-    Extract headers, check against rules, and log the result.
-    """
-    # Pull out the header info we care about
-    header = extract_features(packet)
-    
-    # Skip packets without IP layer (like ARP)
-    # We can't really filter these with IP-based rules
-    if header["src_ip"] is None:
-        return
-    
-    # Check this packet against our filtering rules
-    action, reason = check_packet(header)
-    
-    # Build a message describing the packet
-    if header["src_port"]:
-        # TCP or UDP packet
-        packet_info = (
-            f"{header['protocol'].upper()} "
-            f"{header['src_ip']}:{header['src_port']} -> "
-            f"{header['dst_ip']}:{header['dst_port']}"
-        )
-    else:
-        # ICMP or other protocol without ports
-        packet_info = (
-            f"{header['protocol'].upper()} "
-            f"{header['src_ip']} -> {header['dst_ip']}"
-        )
-    
-    # Log based on action
-    if action == "block":
-        severity = "WARNING"
-        message = f"BLOCKED: {packet_info} | Reason: {reason}"
-    else:
-        severity = "INFO"
-        message = f"ALLOWED: {packet_info} | Reason: {reason}"
-    
-    log_alert(message, source_ip=header["src_ip"], severity=severity)
 
 def print_stats():
     """Print current filtering statistics."""
@@ -64,6 +24,7 @@ def main():
     
     # Start capturing packets in background
     start_sniffing_thread(handle_packet)
+    TrafficGenerator.run_from_json("test/traffic_configs.json")
     
     try:
         # Keep the program running

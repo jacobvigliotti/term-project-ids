@@ -1,0 +1,26 @@
+[
+  {
+    "dst_ip": "192.168.1.10",
+    "dst_port": 80,
+    "protocol": "TCP",
+    "payload": "UNION SELECT * FROM users",
+    "interval": 1.0,
+    "count": 5
+  },
+  {
+    "dst_ip": "192.168.1.10",
+    "dst_port": 443,
+    "protocol": "TCP",
+    "payload": "<script>alert('XSS')</script>",
+    "interval": 2.0,
+    "count": 3
+  },
+  {
+    "dst_ip": "192.168.1.10",
+    "dst_port": 21,
+    "protocol": "TCP",
+    "payload": "GET /etc/passwd",
+    "interval": 1.5,
+    "count": 4
+  }
+]

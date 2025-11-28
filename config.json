@@ -1,6 +1,14 @@
 {
-    "packet_filter": "ip",
-    "alert_log_path": "alerts.log",
+    "interface": null,             
+    "packet_filter": null,            
+    "syn_flood_threshold": 100,        
+    "alert_log_path": "alerts.log",    
+    "ml_model_path": "ml/models/ids_model.pkl",  
+    "enable_dashboard": false,        
+    "capture_limit": 0,            
+    "capture_timeout": 120,           
+    "log_raw_packets": true,       
+    "pcap_output_path": "logs/capture.pcap",
     "filtering_rules": [
         {
             "action": "block",
@@ -8,13 +16,13 @@
             "description": "Block all ping traffic"
         },
         {
-            "action": "allow",
+            "action": "block",
             "dst_port": 80,
             "protocol": "tcp",
             "description": "Allow HTTP traffic"
         },
         {
-            "action": "allow",
+            "action": "block",
             "dst_port": 443,
             "protocol": "tcp",
             "description": "Allow HTTPS traffic"
