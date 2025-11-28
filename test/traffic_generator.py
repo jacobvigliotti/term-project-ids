@@ -50,7 +50,7 @@ class TrafficGenerator(threading.Thread):
 
 
     @staticmethod
-    def run_from_json(json_file: str):
+    def generate_from_file(json_file: str):
         """
         Static method: load multiple configs from a JSON file,
         create TrafficGenerator instances, and execute them.

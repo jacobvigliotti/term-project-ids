@@ -1,38 +1,50 @@
-from scapy.all import sniff, get_if_list
+from scapy.all import sniff
 import threading
-from utils.config import load_config
 from utils.pcap import save_pcap
+from core.packet_handler import handle_packet
 
-# Optional: add filters or interface selection
-config = load_config()
+class PacketSniffer(threading.Thread):
+    def __init__(self, config):
+        """
+        Initialize PacketSniffer as a thread.
+        Loads configuration and sets up sniffing parameters.
+        """
+        super().__init__()
+        self.config = config
+        self.callback = handle_packet
+        self.running = True
 
-def start_sniffing(callback):
-    """
-    Starts packet sniffing using Scapy and sends each packet to the callback.
-    """
-    iface=config["interface"]
-    filter=config["packet_filter"]
-    print(f"[Sniffer] Starting sniffing on interface: {iface} with filter: '{filter}'")
-    packet = sniff(
-        iface=iface,
-        filter=filter,
-        prn=callback,
-        store=True,
-        count = config["capture_limit"],
-        timeout =  config["capture_timeout"]
-    )
-    
-    if(len(packet) > 0):
-        save_pcap(packet)
-        print("finished sniff. save pcap.")
-    else:
-        print("No packets to save.")
+    def run(self):
+        """
+        Thread entry point: start sniffing packets.
+        """
+        iface = self.config["interface"]
+        packet_filter = self.config["packet_filter"]
+        capture_limit = self.config["capture_limit"]
+        capture_timeout = self.config["capture_timeout"]
 
-def start_sniffing_thread(callback):
-    """
-    Starts sniffing in a separate thread.
-    """
-    thread = threading.Thread(target=start_sniffing, args=(callback,))
-    thread.daemon = True
-    thread.start()
-    print("[Sniffer] Sniffing thread started.")
+        print(f"[Sniffer] Starting sniffing on interface: {iface} with filter: '{packet_filter}'")
+
+        packets = sniff(
+            iface=iface,
+            filter=packet_filter,
+            prn=self.callback,
+            store=True,
+            count=capture_limit,
+            timeout=capture_timeout
+        )
+
+        if len(packets) > 0:
+            save_pcap(packets)
+            print("[Sniffer] Finished sniff. Saved pcap.")
+        else:
+            print("[Sniffer] No packets to save.")
+
+    def stop(self):
+        """
+        Stop the sniffer gracefully.
+        """
+        self.running = False
+        # Note: Scapy's sniff() does not natively support external stop signals.
+        # You can add a stop_filter=lambda pkt: not self.running to integrate this.
+

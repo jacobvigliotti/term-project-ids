@@ -1,9 +1,10 @@
-from core.packet_sniffer import start_sniffing_thread
 from core.packet_analyzer import get_stats
-from core.packet_handler import handle_packet
+from core.packet_sniffer import PacketSniffer
 from utils.config import load_config
 from test.traffic_generator import TrafficGenerator
 
+sniffer_config = load_config("config.json")
+generator_config = "test/traffic_configs.json"
 
 def print_stats():
     """Print current filtering statistics."""
@@ -14,17 +15,20 @@ def print_stats():
     print(f"------------------\n")
 
 def main():
-    config = load_config()
-    
     print("[IDS] Shallow Packet Inspection starting...")
-    print(f"[IDS] Monitoring interface: {config.get('interface', 'default')}")
-    print(f"[IDS] Packet filter: {config.get('packet_filter', 'ip')}")
-    print(f"[IDS] Loaded {len(config.get('filtering_rules', []))} filtering rules")
+    print(f"[IDS] Monitoring interface: {sniffer_config.get('interface', 'default')}")
+    print(f"[IDS] Packet filter: {sniffer_config.get('packet_filter', 'ip')}")
+    print(f"[IDS] Loaded {len(sniffer_config.get('filtering_rules', []))} filtering rules")
     print("[IDS] Press Ctrl+C to stop and see statistics\n")
+
+
+
     
     # Start capturing packets in background
-    start_sniffing_thread(handle_packet)
-    TrafficGenerator.run_from_json("test/traffic_configs.json")
+    sniffer = PacketSniffer(sniffer_config)
+    sniffer.start()
+    TrafficGenerator.generate_from_file(generator_config)
+    sniffer.join()
     
     try:
         # Keep the program running

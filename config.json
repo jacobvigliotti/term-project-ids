@@ -16,13 +16,13 @@
             "description": "Block all ping traffic"
         },
         {
-            "action": "block",
+            "action": "allow",
             "dst_port": 80,
             "protocol": "tcp",
             "description": "Allow HTTP traffic"
         },
         {
-            "action": "block",
+            "action": "allow",
             "dst_port": 443,
             "protocol": "tcp",
             "description": "Allow HTTPS traffic"
