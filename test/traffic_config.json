@@ -1,0 +1,28 @@
+{
+  "src_ip": "127.0.0.1",
+  "src_port": 12345,
+  "src_iface": "lo",
+  "dst_ip": "127.0.0.2",
+  "dst_port": 80,
+  "traffic_payloads":
+  [
+    {
+      "protocol": "TCP",
+      "payload": "UNION SELECT * FROM users",
+      "interval": 1.0,
+      "count": 5
+    },
+    {
+      "protocol": "TCP",
+      "payload": "<script>alert('XSS')</script>",
+      "interval": 2.0,
+      "count": 3
+    },
+    {
+      "protocol": "TCP",
+      "payload": "GET /etc/passwd",
+      "interval": 1.5,
+      "count": 4
+    }
+  ]
+}

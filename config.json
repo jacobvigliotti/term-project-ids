@@ -1,5 +1,5 @@
 {
-    "interface": null,             
+    "interface": "lo",             
     "packet_filter": null,            
     "syn_flood_threshold": 100,        
     "alert_log_path": "alerts.log",    
