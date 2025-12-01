@@ -88,6 +88,12 @@ ping 127.0.0.1          # ICMP traffic
 curl http://localhost   # HTTP traffic
 ```
 
+Multiple loopback IPs can be added to support automated testing between local addresses 
+```
+sudo ip addr add 127.0.0.2/8 dev lo
+sudo ip addr add 127.0.0.3/8 dev lo
+```
+
 Check `alerts.log` for results.
 
 Press Ctrl+C to stop and see statistics.
