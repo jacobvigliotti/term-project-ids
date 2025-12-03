@@ -1,16 +1,41 @@
 from scapy.all import IP, TCP, UDP, ICMP, Raw
 from core.packet_analyzer import check_packet
 from core.logger import log_alert
+from core.dos_detector import check_icmp_flood
+from utils.config import load_config
+
+# Load signature rules
+config = load_config()
+SIGNATURE_RULES = config.get("signature_rules", [])
+
+def check_signatures(payload):
+    """
+    Check if packet payload matches any signature patterns.
+    Returns (matched, description) tuple.
+    """
+    if not payload:
+        return (False, None)
+    
+    # Convert bytes to string for pattern matching
+    try:
+        payload_str = payload.decode('utf-8', errors='ignore')
+    except:
+        payload_str = str(payload)
+    
+    # Check each signature rule
+    for rule in SIGNATURE_RULES:
+        pattern = rule.get("pattern", "")
+        if pattern and pattern in payload_str:
+            description = rule.get("description", "Signature match")
+            return (True, description)
+    
+    return (False, None)
 
 def handle_packet(packet):
     """
     Process each captured packet.
     Extract headers, check against rules, and log the result.
     """
-
-
-    payload = bytes(packet[Raw].load) if Raw in packet else b""
-
 
     # Pull out the header info we care about
     header = extract_header(packet)
@@ -19,6 +44,23 @@ def handle_packet(packet):
     # We can't really filter these with IP-based rules
     if header["src_ip"] is None:
         return
+
+    payload = bytes(packet[Raw].load) if Raw in packet else b""
+
+    # Check for signature matches first
+    # Note: Only payload-based patterns work. Header-based patterns (TCP flags, packet size) need separate implementation.
+
+    signature_match, signature_desc = check_signatures(payload)
+    if signature_match:
+        log_alert(f"SIGNATURE DETECTED: {signature_desc} | Payload snippet: {payload[:50]}", 
+                  source_ip=header.get("src_ip"), 
+                  severity="CRITICAL")
+        return  # Stop processing, we already logged it
+    
+    # Check for ICMP flood
+    if header["protocol"] == "icmp":
+        if check_icmp_flood(header["src_ip"]):
+            return  # Already logged, stop processing
     
     # Check this packet against our filtering rules
     action, reason = check_packet(header)
